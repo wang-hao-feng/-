@@ -84,7 +84,10 @@ int _tmain(int argc, char** argv)
         acceptSocket = accept(ProxyServer, NULL, NULL);
         getpeername(acceptSocket, (struct sockaddr *)&peerAddr, &peerLen);
         if(InList(inet_ntoa(peerAddr.sin_addr), &blackip))
+        {
+            printf("This %s is blocked\n", inet_ntoa(peerAddr.sin_addr));
             continue;
+        }
         lpParameter = (ProxyParam *)malloc(sizeof(ProxyParam));
         if(lpParameter == NULL)
             continue;
@@ -227,7 +230,7 @@ unsigned int __stdcall ProxyThread(LPVOID lpParameter)
                 else
                 {
                     IsUpdate(tempBuffer, Date);
-                    MakeCache(Buffer, httpHeader->url, Date);
+                    //MakeCache(Buffer, httpHeader->url, Date);
                     ret = send(((ProxyParam *)lpParameter)->clientSocket, Buffer, MAXSIZE, 0);
                 }
                 delete tempBuffer;
@@ -464,7 +467,6 @@ bool GetCache(char *Buffer, char *url, char *Date)
             *p++ = *url;
         url++;
     }
-    printf("%s\n", temp);
     string filename = temp;
     delete temp;
     filename = "cache/" + filename + ".txt";
